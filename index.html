@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Элегантный загрузчик файлов</title>
+    <title>Элегантный загрузчик с анимацией</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,63 +14,189 @@
         }
 
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: #000000;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
+            color: #ffffff;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
+        .download-trigger {
+            position: fixed;
+            top: 30px;
+            right: 30px;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-weight: 500;
+        }
+
+        .download-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .ripple {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%) scale(0);
+            animation: ripple 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 10;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: translate(-50%, -50%) scale(120);
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 50px;
+            width: 90%;
+            max-width: 520px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
             color: white;
+            transform: scale(0.7) translateY(-50px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            z-index: -1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: rotate(90deg);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff, #aaaaaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         p {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
+            font-size: 1.15rem;
+            margin-bottom: 35px;
+            opacity: 0.8;
+            line-height: 1.6;
+            font-weight: 300;
         }
 
         .download-btn {
             display: inline-block;
-            background: linear-gradient(45deg, #FF416C, #FF4B2B);
-            color: white;
-            padding: 15px 40px;
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            color: #000000;
+            padding: 18px 45px;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.4);
-            transition: all 0.3s ease;
+            font-size: 1.25rem;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0.5px;
         }
 
         .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 75, 43, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.25);
         }
 
         .download-btn:active {
-            transform: translateY(1px);
+            transform: translateY(-1px);
         }
 
         .download-btn::after {
@@ -80,30 +207,31 @@
             width: 100%;
             height: 100%;
             background: rgba(255, 255, 255, 0.1);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
+            transform: translateX(-100%) skewX(-15deg);
+            transition: transform 0.6s ease;
         }
 
         .download-btn:hover::after {
-            transform: translateX(100%);
+            transform: translateX(100%) skewX(-15deg);
         }
 
         .progress-container {
             width: 100%;
-            height: 12px;
-            background: rgba(255, 255, 255, 0.2);
+            height: 14px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
-            margin: 30px 0 15px;
+            margin: 35px 0 20px;
             display: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #00b09b, #96c93d);
+            background: linear-gradient(135deg, #ffffff, #cccccc);
             border-radius: 10px;
-            transition: width 0.5s ease;
+            transition: width 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
         }
@@ -116,7 +244,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: shimmer 2s infinite;
+            animation: shimmer 2.5s ease-in-out infinite;
         }
 
         @keyframes shimmer {
@@ -125,101 +253,282 @@
         }
 
         .percentage {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 15px;
             display: none;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff, #aaaaaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .status {
-            font-size: 1rem;
+            font-size: 1.1rem;
             opacity: 0.8;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: none;
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
 
         .file-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
             text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
         }
 
         .file-info h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
         .file-info p {
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            opacity: 0.7;
         }
 
         .icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 5rem;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.9);
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.2));
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         .completed {
             display: none;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 200, 83, 0.2);
-            border-radius: 10px;
-            border-left: 5px solid #00C853;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            border-left: 4px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .pulse {
-            animation: pulse 2s infinite;
+            animation: pulse 3s ease-in-out infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3); }
+            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
+        }
+
+        .water-drop {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50% 50% 50% 0;
+            background: rgba(255, 255, 255, 0.2);
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-45deg);
+            animation: drop 2s ease-in-out infinite;
+        }
+
+        @keyframes drop {
+            0% {
+                top: -35px;
+                opacity: 1;
+                transform: translateX(-50%) rotate(-45deg) scale(0.8);
+            }
+            80% {
+                top: 90px;
+                opacity: 0.6;
+                transform: translateX(-50%) rotate(-45deg) scale(1);
+            }
+            100% {
+                top: 110px;
+                opacity: 0;
+                transform: translateX(-50%) rotate(-45deg) scale(1.1);
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float-particle 15s infinite linear;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(20px);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="icon">📁</div>
-        <h1>Элегантный Загрузчик</h1>
-        <p>Нажмите кнопку ниже, чтобы скачать файл</p>
-        
-        <a href="#" class="download-btn pulse" id="downloadBtn">Скачать файл</a>
-        
-        <div class="percentage" id="percentage">0%</div>
-        <div class="status" id="status">Подготовка к загрузке...</div>
-        
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        
-        <div class="file-info">
-            <h3>Информация о файле</h3>
-            <p><strong>Имя файла:</strong> example_file.zip</p>
-            <p><strong>Размер:</strong> ~15 МБ</p>
-            <p><strong>Тип:</strong> Архив ZIP</p>
-        </div>
-        
-        <div class="completed" id="completed">
-            <strong>Загрузка завершена!</strong> Файл успешно скачан на ваше устройство.
+    <div class="particles" id="particles"></div>
+    
+    <div class="download-trigger" id="downloadTrigger">
+        <i class="fas fa-download"></i>
+        <span>Download</span>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="water-drop"></div>
+            <div class="close-btn" id="closeBtn">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="icon">📁</div>
+            <h1>Элегантный Загрузчик</h1>
+            <p>Нажмите кнопку ниже, чтобы скачать файл</p>
+            
+            <div class="download-btn pulse" id="downloadBtn">Скачать файл</div>
+            
+            <div class="percentage" id="percentage">0%</div>
+            <div class="status" id="status">Подготовка к загрузке...</div>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="file-info">
+                <h3>Информация о файле</h3>
+                <p><strong>Имя файла:</strong> example_file.zip</p>
+                <p><strong>Размер:</strong> ~15 МБ</p>
+                <p><strong>Тип:</strong> Архив ZIP</p>
+            </div>
+            
+            <div class="completed" id="completed">
+                <strong>Загрузка завершена!</strong> Файл успешно скачан на ваше устройство.
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('downloadBtn').addEventListener('click', function(e) {
-            e.preventDefault();
+        // Создание частиц для фона
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
             
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Случайные позиции и анимации
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particle.style.opacity = Math.random() * 0.7 + 0.1;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Элементы DOM
+        const downloadTrigger = document.getElementById('downloadTrigger');
+        const modal = document.getElementById('modal');
+        const closeBtn = document.getElementById('closeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const percentage = document.getElementById('percentage');
+        const status = document.getElementById('status');
+        const completed = document.getElementById('completed');
+
+        // Инициализация частиц
+        createParticles();
+
+        // Открытие модального окна с анимацией "капли"
+        downloadTrigger.addEventListener('click', function() {
+            // Создаем эффект ряби
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            document.body.appendChild(ripple);
+            
+            // Удаляем элемент после завершения анимации
+            setTimeout(() => {
+                document.body.removeChild(ripple);
+            }, 1500);
+            
+            // Открываем модальное окно
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 400);
+        });
+
+        // Закрытие модального окна
+        closeBtn.addEventListener('click', function() {
+            modal.classList.remove('active');
+            // Сброс состояния загрузки
+            resetDownloadState();
+        });
+
+        // Закрытие модального окна при клике вне его
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                resetDownloadState();
+            }
+        });
+
+        // Сброс состояния загрузки
+        function resetDownloadState() {
+            progressContainer.style.display = 'none';
+            percentage.style.display = 'none';
+            status.style.display = 'none';
+            completed.style.display = 'none';
+            downloadBtn.style.display = 'inline-block';
+            progressBar.style.width = '0%';
+            percentage.textContent = '0%';
+        }
+
+        // Запуск процесса загрузки
+        downloadBtn.addEventListener('click', function() {
             // Ссылка для скачивания
             const downloadUrl = 'https://drive.usercontent.google.com/u/0/uc?id=19_nQzWCCFgkFbR7E6l7Wo5bjezxleRhf&export=download';
             
             // Показать элементы прогресса
-            document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('percentage').style.display = 'block';
-            document.getElementById('status').style.display = 'block';
+            progressContainer.style.display = 'block';
+            percentage.style.display = 'block';
+            status.style.display = 'block';
             
             // Скрыть кнопку
             this.style.display = 'none';
@@ -230,14 +539,10 @@
         
         function simulateDownload() {
             let progress = 0;
-            const progressBar = document.getElementById('progressBar');
-            const percentage = document.getElementById('percentage');
-            const status = document.getElementById('status');
-            const completed = document.getElementById('completed');
             
             // Имитация загрузки с разной скоростью на разных этапах
             const interval = setInterval(() => {
-                progress += Math.random() * 5;
+                progress += Math.random() * 4;
                 
                 if (progress >= 100) {
                     progress = 100;
@@ -254,24 +559,26 @@
                         
                         // Начать фактическую загрузку файла
                         startActualDownload();
-                    }, 500);
+                    }, 600);
                 } else {
                     // Обновить прогресс
                     progressBar.style.width = progress + '%';
                     percentage.textContent = Math.round(progress) + '%';
                     
                     // Обновить статус в зависимости от прогресса
-                    if (progress < 30) {
+                    if (progress < 25) {
                         status.textContent = 'Подготовка файла...';
-                    } else if (progress < 60) {
+                    } else if (progress < 50) {
                         status.textContent = 'Загрузка файла...';
+                    } else if (progress < 75) {
+                        status.textContent = 'Обработка данных...';
                     } else if (progress < 90) {
                         status.textContent = 'Почти готово...';
                     } else {
                         status.textContent = 'Завершение...';
                     }
                 }
-            }, 100);
+            }, 120);
         }
         
         function startActualDownload() {
