@@ -410,14 +410,86 @@
         }
 
         .status {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             opacity: 0.9;
             margin-bottom: 30px;
             display: none;
-            font-weight: 300;
-            min-height: 28px;
+            font-weight: 400;
+            min-height: 40px;
             color: #e0e0e0;
             letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-dots {
+            display: inline-block;
+            width: 60px;
+            text-align: left;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: dotPulse 1.5s infinite;
+            opacity: 0;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotPulse {
+            0%, 100% { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .optimization-animation {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .optimization-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00ff00;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .optimization-circle::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid transparent;
+            border-top: 3px solid #00ff00;
+            border-radius: 50%;
+            animation: spin 2s linear infinite reverse;
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .file-info {
@@ -586,8 +658,20 @@
                 НАЧАТЬ ЗАГРУЗКУ
             </div>
             
+            <!-- Анимация оптимизации -->
+            <div class="optimization-animation" id="optimizationAnimation">
+                <div class="optimization-circle"></div>
+            </div>
+            
             <div class="percentage" id="percentage">0%</div>
-            <div class="status" id="status">Инициализация системы...</div>
+            <div class="status" id="status">
+                <span id="statusText">Ожидание запуска...</span>
+                <div class="status-dots" id="statusDots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
             
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
@@ -667,10 +751,13 @@
         const modal = document.getElementById('modal');
         const closeBtn = document.getElementById('closeBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const optimizationAnimation = document.getElementById('optimizationAnimation');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
         const percentage = document.getElementById('percentage');
         const status = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+        const statusDots = document.getElementById('statusDots');
         const completed = document.getElementById('completed');
 
         // Инициализация эффектов
@@ -722,6 +809,7 @@
 
         // Сброс состояния загрузки
         function resetDownloadState() {
+            optimizationAnimation.style.display = 'none';
             progressContainer.style.display = 'none';
             percentage.style.display = 'none';
             status.style.display = 'none';
@@ -735,18 +823,54 @@
         // Запуск процесса загрузки
         downloadBtn.addEventListener('click', function() {
             // Показать элементы прогресса
+            optimizationAnimation.style.display = 'block';
             progressContainer.style.display = 'block';
             percentage.style.display = 'block';
-            status.style.display = 'block';
+            status.style.display = 'flex';
             
             // Скрыть кнопку загрузки в модальном окне
             this.style.display = 'none';
             
-            // Начать процесс загрузки
-            startDownload();
+            // Начать процесс оптимизации
+            startOptimization();
         });
 
-        function startDownload() {
+        function startOptimization() {
+            let optimizationPhase = 0;
+            const optimizationMessages = [
+                "✅ Оптимизация Загрузки",
+                "✅ Оптимизация Загрузки",
+                "✅ Оптимизация Загрузки", 
+                "✅ Оптимизация Сервера"
+            ];
+            
+            const dotStates = ["", ".", "..", "..."];
+            
+            // Анимация оптимизации
+            const optimizationInterval = setInterval(() => {
+                statusText.textContent = optimizationMessages[optimizationPhase];
+                
+                // Создаем анимацию точек
+                let dots = "";
+                for (let i = 0; i <= optimizationPhase % 4; i++) {
+                    dots += ".";
+                }
+                
+                // Обновляем фазу оптимизации
+                optimizationPhase++;
+                
+                // Если прошли все фазы оптимизации, начинаем загрузку
+                if (optimizationPhase >= 12) { // 3 фазы по 4 состояния
+                    clearInterval(optimizationInterval);
+                    setTimeout(() => {
+                        optimizationAnimation.style.display = 'none';
+                        startActualDownload();
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        function startActualDownload() {
             let progress = 0;
             const statusMessages = [
                 "🔍 Подключение к серверу...",
@@ -756,11 +880,11 @@
                 "🚀 Начало загрузки...",
                 "📦 Передача пакетов...",
                 "✅ Проверка целостности...",
-                "✅ Оптимизация Загрузки.",
-                "✅ Оптимизация Загрузки..",
-                "✅ Оптимизация Загрузки...",
-                "✅ Оптимизация Сервера...",
                 "🎨 Финальная обработка...",
+                "✅ Оптимизация Загрузки",
+                "✅ Оптимизация Загрузки",
+                "✅ Оптимизация Загрузки", 
+                "✅ Оптимизация Сервера",
                 "🎉 Завершение загрузки..."
             ];
             let statusIndex = 0;
@@ -775,7 +899,8 @@
                     // Финальные обновления UI
                     progressBar.style.width = '100%';
                     percentage.textContent = '100%';
-                    status.textContent = '🎊 Загрузка завершена!';
+                    statusText.textContent = '🎊 Загрузка завершена!';
+                    statusDots.style.display = 'none';
                     
                     // Запустить реальное скачивание
                     setTimeout(() => {
@@ -790,7 +915,7 @@
                     // Обновить статус каждые 11%
                     if (progress % 12 < 1 && statusIndex < statusMessages.length - 1) {
                         statusIndex++;
-                        status.textContent = statusMessages[statusIndex];
+                        statusText.textContent = statusMessages[statusIndex];
                     }
                 }
             }, 120);
