@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xeno v1.2.95 - Premium Download</title>
+    <title>XENO v1.2.95 - LIQUID GLASS UI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,37 +14,449 @@
         }
 
         body {
-            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             overflow: hidden;
             position: relative;
         }
 
-        /* Анимация частиц */
-        .particles {
+        /* === ЭФФЕКТЫ ЖИДКОГО СТЕКЛА === */
+        .liquid-glass-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(255,255,255,0.02) 0%, transparent 50%);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            z-index: 5;
+            opacity: 0.6;
+        }
+
+        .glass-morph-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 6;
         }
 
-        .particle {
+        .glass-blob {
             position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            filter: blur(60px);
+            animation: liquidFloat 8s ease-in-out infinite;
+        }
+
+        .glass-blob:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .glass-blob:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .glass-blob:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes liquidFloat {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% { 
+                transform: translate(50px, -30px) scale(1.1);
+                opacity: 0.5;
+            }
+            50% { 
+                transform: translate(-30px, 40px) scale(0.9);
+                opacity: 0.4;
+            }
+            75% { 
+                transform: translate(40px, 50px) scale(1.05);
+                opacity: 0.6;
+            }
+        }
+
+        .liquid-ripples {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 7;
+        }
+
+        .liquid-ripple {
+            position: absolute;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: liquidRipple 4s ease-out infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes liquidRipple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                width: 600px;
+                height: 600px;
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        /* === ОСНОВНОЙ ИНТЕРФЕЙС С ЖИДКИМ СТЕКЛОМ === */
+        .main-container {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 40px;
+            padding: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            animation: glassShine 6s ease-in-out infinite;
+        }
+
+        @keyframes glassShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .liquid-title {
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.9) 0%, 
+                rgba(255,255,255,0.7) 50%,
+                rgba(255,255,255,0.9) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 
+                0 0 60px rgba(255, 255, 255, 0.6),
+                0 0 100px rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+            position: relative;
+            animation: titleLiquid 4s ease-in-out infinite;
+        }
+
+        @keyframes titleLiquid {
+            0%, 100% { 
+                transform: translateY(0) scale(1);
+                text-shadow: 
+                    0 0 60px rgba(255, 255, 255, 0.6),
+                    0 0 100px rgba(255, 255, 255, 0.3);
+            }
+            50% { 
+                transform: translateY(-5px) scale(1.02);
+                text-shadow: 
+                    0 0 80px rgba(255, 255, 255, 0.8),
+                    0 0 120px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .liquid-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+            font-weight: 300;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        /* === КНОПКА С ЭФФЕКТОМ ЖИДКОГО СТЕКЛА === */
+        .liquid-download-btn {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            color: white;
+            padding: 25px 60px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .liquid-download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: left 0.8s ease;
+        }
+
+        .liquid-download-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 2px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .liquid-download-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-liquid-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.1) 100%);
+            border-radius: 50px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .liquid-download-btn:hover .btn-liquid-fill {
+            transform: scaleX(1);
+        }
+
+        /* === МОДАЛЬНОЕ ОКНО С ЖИДКИМ СТЕКЛОМ === */
+        .liquid-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s ease;
+        }
+
+        .liquid-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-glass-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+        }
+
+        .modal-liquid-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(60px);
+            -webkit-backdrop-filter: blur(60px);
+            border-radius: 40px;
+            padding: 70px;
+            width: 90%;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.8) translateY(50px);
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .liquid-modal.active .modal-liquid-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-liquid-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            animation: modalLiquidRotate 15s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes modalLiquidRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* === ПРОГРЕСС БАР С ЖИДКИМ ЭФФЕКТОМ === */
+        .liquid-progress-container {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin: 40px 0;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .liquid-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.8) 0%, 
+                rgba(255,255,255,0.6) 50%,
+                rgba(255,255,255,0.8) 100%);
+            border-radius: 15px;
+            position: relative;
+            transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow: hidden;
+        }
+
+        .liquid-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: liquidProgressShine 2s ease-in-out infinite;
+        }
+
+        @keyframes liquidProgressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .progress-liquid-drops {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .liquid-drop {
+            position: absolute;
+            width: 4px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            animation: floatParticle linear infinite;
+            animation: dropFall 3s linear infinite;
             filter: blur(1px);
         }
 
-        @keyframes floatParticle {
+        @keyframes dropFall {
             0% {
-                transform: translateY(100vh) rotate(0deg) scale(0);
+                transform: translateY(-100%);
                 opacity: 0;
             }
             10% {
@@ -54,866 +466,282 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100px) rotate(360deg) scale(1);
+                transform: translateY(400%);
                 opacity: 0;
             }
         }
 
-        /* Смайлики с анимацией */
-        .floating-emojis {
+        /* === ЖИДКИЕ КАПЛИ НА ФОНЕ === */
+        .floating-liquid-drops {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 2;
+            z-index: 8;
         }
 
-        .floating-emoji {
+        .floating-drop {
             position: absolute;
-            font-size: 2rem;
-            opacity: 0;
-            animation: floatEmoji linear infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: floatingDrop 8s ease-in-out infinite;
         }
 
-        @keyframes floatEmoji {
-            0% {
-                transform: translateY(100vh) rotate(0deg) scale(0);
-                opacity: 0;
+        @keyframes floatingDrop {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
             }
-            20% {
-                opacity: 0.7;
-            }
-            80% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg) scale(1);
-                opacity: 0;
-            }
-        }
-
-        /* Кнопка Download сверху */
-        .download-trigger {
-            position: fixed;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 100%);
-            color: white;
-            padding: 20px 50px;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.6),
-                0 0 0 2px rgba(255, 255, 255, 0.1),
-                inset 0 0 50px rgba(255, 255, 255, 0.05);
-            z-index: 100;
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: none;
-            font-size: 1.3rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            overflow: hidden;
-            backdrop-filter: blur(20px);
-        }
-
-        .download-trigger:hover {
-            transform: translateX(-50%) translateY(-5px) scale(1.08);
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.8),
-                0 0 0 3px rgba(255, 255, 255, 0.2),
-                inset 0 0 80px rgba(255, 255, 255, 0.1);
-            background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.15) 0%, 
-                rgba(255, 255, 255, 0.08) 100%);
-        }
-
-        /* Анимация волн при наведении */
-        .wave-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50px;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .wave {
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.3), 
-                transparent);
-            animation: waveFlow 2s ease-in-out infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .wave-1 { animation-delay: 0s; }
-        .wave-2 { animation-delay: 0.4s; }
-        .wave-3 { animation-delay: 0.8s; }
-
-        .download-trigger:hover .wave {
-            opacity: 1;
-        }
-
-        @keyframes waveFlow {
-            0% {
-                left: -100%;
-                opacity: 0;
+            25% {
+                transform: translate(20px, -15px) scale(1.2);
+                opacity: 0.6;
             }
             50% {
-                opacity: 1;
+                transform: translate(-10px, 25px) scale(0.8);
+                opacity: 0.4;
             }
-            100% {
-                left: 100%;
-                opacity: 0;
-            }
-        }
-
-        /* Анимация капли */
-        .water-drop {
-            position: fixed;
-            border-radius: 50%;
-            background: radial-gradient(circle, 
-                rgba(255, 255, 255, 0.9) 0%, 
-                rgba(200, 200, 200, 0.7) 50%,
-                transparent 100%);
-            transform: scale(0);
-            z-index: 10;
-            pointer-events: none;
-            filter: blur(15px);
-            animation: dropExpand 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        @keyframes dropExpand {
-            0% {
-                transform: scale(0.03);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.08);
-                opacity: 0.8;
-            }
-            100% {
-                transform: scale(1.06);
-                opacity: 0;
+            75% {
+                transform: translate(15px, 20px) scale(1.1);
+                opacity: 0.7;
             }
         }
 
-        /* Модальное окно */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.6s ease;
-        }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(30px);
-            border-radius: 30px;
-            padding: 60px;
-            width: 90%;
-            max-width: 700px;
-            box-shadow: 
-                0 40px 80px rgba(0, 0, 0, 0.8),
-                0 0 0 2px rgba(255, 255, 255, 0.1),
-                inset 0 0 60px rgba(255, 255, 255, 0.03);
-            text-align: center;
-            color: white;
-            transform: scale(0.7) rotateX(45deg);
-            opacity: 0;
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1) rotateX(0);
-            opacity: 1;
-        }
-
-        .modal-content::before {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
-            background: conic-gradient(
-                from 0deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent,
-                rgba(255, 255, 255, 0.05),
-                transparent
-            );
-            animation: rotate 15s linear infinite;
-            z-index: -1;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(255, 255, 255, 0.08);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            z-index: 2;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(180deg) scale(1.1);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 25px;
-            font-weight: 300;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffffff, #cccccc, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 200% 100%;
-            animation: shimmerText 3s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes shimmerText {
-            0%, 100% { background-position: -200% 0; }
-            50% { background-position: 200% 0; }
-        }
-
-        p {
-            font-size: 1.3rem;
-            margin-bottom: 40px;
-            opacity: 0.9;
-            line-height: 1.7;
-            font-weight: 300;
-            color: #e0e0e0;
-            letter-spacing: 0.5px;
-        }
-
-        .download-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #ffffff, #e8e8e8);
-            color: #000000;
-            padding: 22px 55px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 1.4rem;
-            font-weight: 700;
-            box-shadow: 
-                0 15px 35px rgba(255, 255, 255, 0.3),
-                0 0 25px rgba(255, 255, 255, 0.2),
-                inset 0 0 20px rgba(255, 255, 255, 0.1);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 40px;
-            cursor: pointer;
-            border: none;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-5px) scale(1.08);
-            box-shadow: 
-                0 20px 45px rgba(255, 255, 255, 0.4),
-                0 0 35px rgba(255, 255, 255, 0.3),
-                inset 0 0 30px rgba(255, 255, 255, 0.2);
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 18px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 40px 0 25px;
-            display: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                inset 0 2px 15px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(135deg, #ffffff, #aaaaaa, #ffffff);
-            border-radius: 12px;
-            transition: width 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-            background-size: 200% 100%;
-            animation: progressShimmer 2s ease-in-out infinite;
-        }
-
-        @keyframes progressShimmer {
-            0%, 100% { background-position: -200% 0; }
-            50% { background-position: 200% 0; }
-        }
-
-        .percentage {
-            font-size: 2.8rem;
-            font-weight: 300;
-            margin-bottom: 20px;
-            display: none;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffffff, #cccccc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .status {
-            font-size: 1.4rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            display: none;
-            font-weight: 400;
-            min-height: 40px;
-            color: #e0e0e0;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .status-dots {
-            display: inline-block;
-            width: 60px;
-            text-align: left;
-        }
-
-        .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: #00ff00;
-            border-radius: 50%;
-            margin: 0 2px;
-            animation: dotPulse 1.5s infinite;
-            opacity: 0;
-        }
-
-        .dot:nth-child(1) { animation-delay: 0s; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes dotPulse {
-            0%, 100% { 
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            50% { 
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-
-        .optimization-animation {
-            display: none;
-            margin: 30px 0;
-        }
-
-        .optimization-circle {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #00ff00;
-            border-radius: 50%;
-            animation: spin 1.5s linear infinite;
-            margin: 0 auto 20px;
-            position: relative;
-        }
-
-        .optimization-circle::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            border: 3px solid transparent;
-            border-top: 3px solid #00ff00;
-            border-radius: 50%;
-            animation: spin 2s linear infinite reverse;
-            opacity: 0.7;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .file-info {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 30px;
-            border-radius: 20px;
-            margin-top: 30px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            transform: translateY(30px);
-            opacity: 0;
-            animation: slideUpFade 1s ease 0.8s forwards;
-        }
-
-        @keyframes slideUpFade {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .file-info h3 {
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            font-weight: 400;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-
-        .file-info p {
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-
-        .icon {
+        /* === ИКОНКИ С ЖИДКИМ ЭФФЕКТОМ === */
+        .liquid-icon {
             font-size: 6rem;
             margin-bottom: 30px;
-            color: #ffffff;
-            animation: float3D 6s ease-in-out infinite;
+            color: rgba(255, 255, 255, 0.9);
+            animation: liquidIconFloat 6s ease-in-out infinite;
             filter: 
-                drop-shadow(0 10px 25px rgba(255, 255, 255, 0.3))
-                drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
-            transform-style: preserve-3d;
+                drop-shadow(0 10px 20px rgba(255, 255, 255, 0.4))
+                drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
+            position: relative;
         }
 
-        @keyframes float3D {
-            0%, 100% { 
-                transform: translateY(0px) rotateY(0deg) scale(1);
-            }
-            25% { 
-                transform: translateY(-20px) rotateY(90deg) scale(1.1);
-            }
-            50% { 
-                transform: translateY(-10px) rotateY(180deg) scale(1.2);
-            }
-            75% { 
-                transform: translateY(-15px) rotateY(270deg) scale(1.1);
-            }
-        }
-
-        .completed {
-            display: none;
-            margin-top: 30px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            border-left: 5px solid #ffffff;
-            backdrop-filter: blur(15px);
-            animation: completeReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-origin: center;
-        }
-
-        @keyframes completeReveal {
-            0% { 
-                transform: scale(0.7) rotateX(-90deg);
-                opacity: 0;
-            }
-            100% { 
-                transform: scale(1) rotateX(0);
-                opacity: 1;
-            }
-        }
-
-        .pulse {
-            animation: gentlePulse 4s ease-in-out infinite;
-        }
-
-        @keyframes gentlePulse {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 
-                    0 15px 35px rgba(255, 255, 255, 0.3),
-                    0 0 25px rgba(255, 255, 255, 0.2);
-            }
-            50% { 
-                transform: scale(1.05);
-                box-shadow: 
-                    0 20px 45px rgba(255, 255, 255, 0.4),
-                    0 0 35px rgba(255, 255, 255, 0.3);
-            }
-        }
-
-        /* Эффект неонового свечения */
-        .neon-glow {
-            position: fixed;
+        .liquid-icon::after {
+            content: '';
+            position: absolute;
             top: 50%;
             left: 50%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                transparent 70%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
             transform: translate(-50%, -50%);
+            border-radius: 50%;
+            filter: blur(20px);
             z-index: -1;
-            animation: pulseGlow 4s ease-in-out infinite;
-            filter: blur(40px);
+            animation: liquidIconGlow 4s ease-in-out infinite;
         }
 
-        @keyframes pulseGlow {
+        @keyframes liquidIconFloat {
             0%, 100% { 
-                opacity: 0.3; 
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            25% { 
+                transform: translateY(-15px) rotate(5deg) scale(1.1);
+            }
+            50% { 
+                transform: translateY(-8px) rotate(-3deg) scale(1.05);
+            }
+            75% { 
+                transform: translateY(-12px) rotate(2deg) scale(1.08);
+            }
+        }
+
+        @keyframes liquidIconGlow {
+            0%, 100% { 
+                opacity: 0.3;
                 transform: translate(-50%, -50%) scale(1);
             }
             50% { 
-                opacity: 0.6; 
-                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1.2);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Эффект неонового свечения -->
-    <div class="neon-glow"></div>
-    
-    <!-- Анимация частиц -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- Плавающие смайлики -->
-    <div class="floating-emojis" id="floatingEmojis"></div>
-    
-    <!-- Основная кнопка Download сверху -->
-    <div class="download-trigger" id="downloadTrigger">
-        <div class="wave-container">
-            <div class="wave wave-1"></div>
-            <div class="wave wave-2"></div>
-            <div class="wave wave-3"></div>
+    <!-- === ЭФФЕКТЫ ЖИДКОГО СТЕКЛА === -->
+    <div class="liquid-glass-overlay"></div>
+    <div class="glass-morph-container">
+        <div class="glass-blob"></div>
+        <div class="glass-blob"></div>
+        <div class="glass-blob"></div>
+    </div>
+    <div class="liquid-ripples" id="liquidRipples"></div>
+    <div class="floating-liquid-drops" id="floatingLiquidDrops"></div>
+
+    <!-- === ОСНОВНОЙ ИНТЕРФЕЙС === -->
+    <div class="main-container">
+        <div class="glass-panel">
+            <div class="title-container">
+                <h1 class="liquid-title">XENO v1.2.95</h1>
+                <p class="liquid-subtitle">LIQUID GLASS EDITION • ULTIMATE EXPERIENCE</p>
+            </div>
+            
+            <button class="liquid-download-btn" id="downloadTrigger">
+                <div class="btn-liquid-fill"></div>
+                <i class="fas fa-download"></i>
+                <span>DOWNLOAD NOW</span>
+            </button>
         </div>
-        <i class="fas fa-download"></i>
-        <span>Download Xeno</span>
     </div>
 
-    <!-- Модальное окно загрузки -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <div class="close-btn" id="closeBtn">
+    <!-- === МОДАЛЬНОЕ ОКНО === -->
+    <div class="liquid-modal" id="modal">
+        <div class="modal-glass-backdrop"></div>
+        <div class="modal-liquid-content">
+            <div class="close-btn" id="closeBtn" style="
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                background: rgba(255,255,255,0.1);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border: 1px solid rgba(255,255,255,0.2);
+                color: white;
+                font-size: 1.2rem;
+            ">
                 <i class="fas fa-times"></i>
             </div>
-            <div class="icon">⚡</div>
-            <h1>XENO v1.2.95</h1>
-            <p>Премиум версия готов к скачиванию</p>
             
-            <div class="download-btn pulse" id="downloadBtn">
-                <i class="fas fa-rocket"></i>
-                НАЧАТЬ ЗАГРУЗКУ
-            </div>
+            <div class="liquid-icon">⚡</div>
+            <h1 style="font-size: 3rem; margin-bottom: 20px; background: linear-gradient(135deg, #ffffff, #cccccc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">LIQUID DOWNLOAD</h1>
+            <p style="font-size: 1.3rem; margin-bottom: 40px; opacity: 0.9;">Загрузка с эффектом жидкого стекла</p>
             
-            <!-- Анимация оптимизации -->
-            <div class="optimization-animation" id="optimizationAnimation">
-                <div class="optimization-circle"></div>
-            </div>
-            
-            <div class="percentage" id="percentage">0%</div>
-            <div class="status" id="status">
-                <span id="statusText">Ожидание запуска...</span>
-                <div class="status-dots" id="statusDots">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
+            <div class="liquid-progress-container">
+                <div class="liquid-progress-bar" id="progressBar">
+                    <div class="progress-liquid-drops" id="progressDrops"></div>
                 </div>
             </div>
             
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
+            <div style="color: white; font-size: 1.2rem; margin-bottom: 30px;" id="statusText">
+                Готов к загрузке...
             </div>
             
-            <div class="file-info">
-                <h3>📦 Информация о файле</h3>
-                <p><strong>🎯 Имя файла:</strong> Xeno-v1.2.95.zip</p>
-                <p><strong>📁 Расположение:</strong> /files/Xeno-v1.2.95.zip</p>
-                <p><strong>💾 Размер:</strong> ~18.5 МБ</p>
-                <p><strong>🚀 Версия:</strong> 1.2.95 (Stable Release)</p>
-                <p><strong>⭐ Рейтинг:</strong> ★★★★★ (4.9/5.0)</p>
-            </div>
-            
-            <div class="completed" id="completed">
-                <strong>🎉 Загрузка завершена успешно!</strong><br>
-                <span style="opacity: 0.8;">Файл Xeno-v1.2.95.zip сохранен в вашу папку загрузок</span>
-            </div>
+            <button class="liquid-download-btn" id="startDownload" style="margin-top: 20px;">
+                <div class="btn-liquid-fill"></div>
+                <i class="fas fa-play"></i>
+                <span>НАЧАТЬ ЗАГРУЗКУ</span>
+            </button>
         </div>
     </div>
 
     <script>
-        // Создание анимации частиц
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 150;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
+        // === ИНИЦИАЛИЗАЦИЯ ЭФФЕКТОВ ЖИДКОГО СТЕКЛА ===
+
+        // Создание жидких рипплов
+        function createLiquidRipples() {
+            const container = document.getElementById('liquidRipples');
+            setInterval(() => {
+                const ripple = document.createElement('div');
+                ripple.classList.add('liquid-ripple');
                 
-                const size = Math.random() * 3 + 1;
                 const left = Math.random() * 100;
-                const duration = 10 + Math.random() * 20;
-                const delay = Math.random() * 10;
-                const opacity = Math.random() * 0.6 + 0.2;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 2;
                 
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${left}vw`;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.opacity = opacity;
+                ripple.style.left = `${left}%`;
+                ripple.style.top = `${top}%`;
+                ripple.style.animationDelay = `${delay}s`;
                 
-                particlesContainer.appendChild(particle);
-            }
+                container.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 4000);
+            }, 2000);
         }
 
-        // Создание плавающих смайликов
-        function createFloatingEmojis() {
-            const emojisContainer = document.getElementById('floatingEmojis');
-            const emojis = ['⭐', '✨', '🚀', '💫', '🎯', '🔥', '💎', '⚡', '🌟', '🎮'];
-            const emojiCount = 25;
-            
-            for (let i = 0; i < emojiCount; i++) {
-                const emoji = document.createElement('div');
-                emoji.classList.add('floating-emoji');
+        // Создание плавающих капель
+        function createFloatingDrops() {
+            const container = document.getElementById('floatingLiquidDrops');
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('floating-drop');
                 
-                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
                 const left = Math.random() * 100;
-                const duration = 8 + Math.random() * 12;
+                const top = Math.random() * 100;
                 const delay = Math.random() * 8;
-                const size = 1 + Math.random() * 1.5;
+                const duration = 6 + Math.random() * 4;
                 
-                emoji.textContent = randomEmoji;
-                emoji.style.left = `${left}vw`;
-                emoji.style.animationDuration = `${duration}s`;
-                emoji.style.animationDelay = `${delay}s`;
-                emoji.style.fontSize = `${size}rem`;
+                drop.style.left = `${left}%`;
+                drop.style.top = `${top}%`;
+                drop.style.animationDelay = `${delay}s`;
+                drop.style.animationDuration = `${duration}s`;
                 
-                emojisContainer.appendChild(emoji);
+                container.appendChild(drop);
             }
         }
 
-        // Элементы DOM
-        const downloadTrigger = document.getElementById('downloadTrigger');
-        const modal = document.getElementById('modal');
-        const closeBtn = document.getElementById('closeBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const optimizationAnimation = document.getElementById('optimizationAnimation');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const percentage = document.getElementById('percentage');
-        const status = document.getElementById('status');
-        const statusText = document.getElementById('statusText');
-        const statusDots = document.getElementById('statusDots');
-        const completed = document.getElementById('completed');
-
-        // Инициализация эффектов
-        createParticles();
-        createFloatingEmojis();
-
-        // Анимация капли при клике
-        downloadTrigger.addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const size = Math.max(rect.width, rect.height) * 1.03;
-            
-            // Создаем каплю
-            const drop = document.createElement('div');
-            drop.classList.add('water-drop');
-            drop.style.width = `${size}px`;
-            drop.style.height = `${size}px`;
-            drop.style.left = `${centerX - size/2}px`;
-            drop.style.top = `${centerY - size/2}px`;
-            
-            document.body.appendChild(drop);
-            
-            // Удаляем каплю после анимации
-            setTimeout(() => {
-                if (document.body.contains(drop)) {
-                    document.body.removeChild(drop);
-                }
-            }, 1500);
-            
-            // Открываем модальное окно
-            setTimeout(() => {
-                modal.classList.add('active');
-            }, 500);
-        });
-
-        // Закрытие модального окна
-        closeBtn.addEventListener('click', function() {
-            modal.classList.remove('active');
-            resetDownloadState();
-        });
-
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                resetDownloadState();
-            }
-        });
-
-        // Сброс состояния загрузки
-        function resetDownloadState() {
-            optimizationAnimation.style.display = 'none';
-            progressContainer.style.display = 'none';
-            percentage.style.display = 'none';
-            status.style.display = 'none';
-            completed.style.display = 'none';
-            downloadBtn.style.display = 'inline-block';
-            progressBar.style.width = '0%';
-            percentage.textContent = '0%';
-            downloadBtn.style.transform = 'scale(1)';
-        }
-
-        // Запуск процесса загрузки
-        downloadBtn.addEventListener('click', function() {
-            // Показать элементы прогресса
-            optimizationAnimation.style.display = 'block';
-            progressContainer.style.display = 'block';
-            percentage.style.display = 'block';
-            status.style.display = 'flex';
-            
-            // Скрыть кнопку загрузки в модальном окне
-            this.style.display = 'none';
-            
-            // Начать процесс оптимизации
-            startOptimization();
-        });
-
-        function startOptimization() {
-            let optimizationPhase = 0;
-            const optimizationMessages = [
-                "✅ Оптимизация Загрузки",
-                "✅ Оптимизация Загрузки",
-                "✅ Оптимизация Загрузки", 
-                "✅ Оптимизация Сервера"
-            ];
-            
-            const dotStates = ["", ".", "..", "..."];
-            
-            // Анимация оптимизации
-            const optimizationInterval = setInterval(() => {
-                statusText.textContent = optimizationMessages[optimizationPhase];
+        // Создание капель в прогресс баре
+        function createProgressDrops() {
+            const container = document.getElementById('progressDrops');
+            setInterval(() => {
+                const drop = document.createElement('div');
+                drop.classList.add('liquid-drop');
                 
-                // Создаем анимацию точек
-                let dots = "";
-                for (let i = 0; i <= optimizationPhase % 4; i++) {
-                    dots += ".";
-                }
+                const left = Math.random() * 100;
+                const delay = Math.random() * 3;
                 
-                // Обновляем фазу оптимизации
-                optimizationPhase++;
+                drop.style.left = `${left}%`;
+                drop.style.animationDelay = `${delay}s`;
                 
-                // Если прошли все фазы оптимизации, начинаем загрузку
-                if (optimizationPhase >= 12) { // 3 фазы по 4 состояния
-                    clearInterval(optimizationInterval);
-                    setTimeout(() => {
-                        optimizationAnimation.style.display = 'none';
-                        startActualDownload();
-                    }, 500);
-                }
+                container.appendChild(drop);
+                
+                setTimeout(() => {
+                    drop.remove();
+                }, 3000);
             }, 300);
         }
 
-        function startActualDownload() {
+        // Анимация загрузки
+        function startLiquidDownload() {
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('statusText');
             let progress = 0;
+            
             const statusMessages = [
-                "🔍 Подключение к серверу...",
-                "📁 Поиск файла Xeno-v1.2.95.zip...", 
-                "🔒 Установка безопасного соединения...",
-                "⚡ Подготовка к передаче данных...",
-                "🚀 Начало загрузки...",
-                "📦 Передача пакетов...",
-                "✅ Проверка целостности...",
-                "🎨 Финальная обработка...",
-                "✅ Оптимизация Загрузки",
-                "✅ Оптимизация Загрузки",
-                "✅ Оптимизация Загрузки", 
-                "✅ Оптимизация Сервера",
-                "🎉 Завершение загрузки..."
+                "🔄 Инициализация жидкой загрузки...",
+                "💧 Подготовка стеклянных потоков...",
+                "⚡ Оптимизация жидкого интерфейса...",
+                "🌊 Настройка волновых эффектов...",
+                "🚀 Запуск квантового ускорения...",
+                "📦 Подготовка файлов...",
+                "🔒 Проверка безопасности...",
+                "🎯 Финальная настройка..."
             ];
+            
             let statusIndex = 0;
             
             const interval = setInterval(() => {
-                progress += Math.random() * 4 + 1;
+                progress += Math.random() * 3 + 1;
                 
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(interval);
                     
-                    // Финальные обновления UI
                     progressBar.style.width = '100%';
-                    percentage.textContent = '100%';
-                    statusText.textContent = '🎊 Загрузка завершена!';
-                    statusDots.style.display = 'none';
+                    statusText.textContent = '✅ Загрузка завершена!';
                     
-                    // Запустить реальное скачивание
                     setTimeout(() => {
-                        downloadFileFromServer();
-                        completed.style.display = 'block';
-                    }, 800);
+                        // Здесь будет реальная загрузка файла
+                        alert('Файл успешно загружен!');
+                    }, 1000);
                 } else {
-                    // Обновить прогресс
                     progressBar.style.width = progress + '%';
-                    percentage.textContent = Math.round(progress) + '%';
                     
-                    // Обновить статус каждые 11%
-                    if (progress % 12 < 1 && statusIndex < statusMessages.length - 1) {
+                    if (progress % 15 < 1 && statusIndex < statusMessages.length - 1) {
                         statusIndex++;
                         statusText.textContent = statusMessages[statusIndex];
                     }
@@ -921,22 +749,29 @@
             }, 120);
         }
 
-        function downloadFileFromServer() {
-            // Скачивание файла с сервера
-            const fileUrl = '/files/Xeno-v1.2.95.zip';
-            
-            const a = document.createElement('a');
-            a.href = fileUrl;
-            a.download = 'Xeno-v1.2.95.zip';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        // Обработчики событий
+        document.getElementById('downloadTrigger').addEventListener('click', function() {
+            document.getElementById('modal').classList.add('active');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('modal').classList.remove('active');
+        });
+
+        document.getElementById('startDownload').addEventListener('click', function() {
+            this.style.display = 'none';
+            startLiquidDownload();
+        });
+
+        // Инициализация всех эффектов
+        function initializeLiquidEffects() {
+            createLiquidRipples();
+            createFloatingDrops();
+            createProgressDrops();
         }
 
-        // Проверка доступности файла при загрузке страницы
-        window.addEventListener('load', function() {
-            console.log('🎮 Xeno Premium Downloader готов к работе!');
-        });
+        // Запуск при загрузке страницы
+        window.addEventListener('load', initializeLiquidEffects);
     </script>
 </body>
 </html>
