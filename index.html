@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Элегантный загрузчик с анимацией</title>
+    <title>Скачать Xeno v1.2.95</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,63 +14,127 @@
         }
 
         body {
-            background: #000000;
+            background: linear-gradient(135deg, #0c0c0c, #1a1a2e);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-            color: #ffffff;
+            overflow: hidden;
+            position: relative;
         }
 
-        .download-trigger {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            font-weight: 500;
-        }
-
-        .download-trigger:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .ripple {
+        /* Анимация дождя */
+        .rain-background {
             position: fixed;
             top: 0;
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
-            transform: translate(-50%, -50%) scale(0);
-            animation: ripple 1.5s cubic-bezier(0.19, 1, 0.22, 1);
-            z-index: 10;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        @keyframes ripple {
-            to {
-                transform: translate(-50%, -50%) scale(120);
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
+            animation: rainFall linear infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes rainFall {
+            0% {
+                transform: translateY(-100px) rotate(15deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(15deg);
                 opacity: 0;
             }
         }
 
+        /* Кнопка Download */
+        .download-trigger {
+            position: relative;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                0 0 0 2px rgba(255, 255, 255, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            overflow: hidden;
+        }
+
+        .download-trigger:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 20px 45px rgba(102, 126, 234, 0.4),
+                0 0 0 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .download-trigger::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .download-trigger:hover::before {
+            left: 100%;
+        }
+
+        /* Анимация капли */
+        .water-drop {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.7));
+            transform: scale(0);
+            z-index: 10;
+            pointer-events: none;
+            filter: blur(5px);
+            animation: dropExpand 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes dropExpand {
+            0% {
+                transform: scale(0.03);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.06);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -83,7 +147,7 @@
             z-index: 20;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         .modal.active {
@@ -92,36 +156,39 @@
         }
 
         .modal-content {
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: 24px;
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
             padding: 50px;
             width: 90%;
-            max-width: 520px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 40px rgba(255, 255, 255, 0.05);
             text-align: center;
             color: white;
-            transform: scale(0.7) translateY(-50px);
+            transform: scale(0.8);
             opacity: 0;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal.active .modal-content {
-            transform: scale(1) translateY(0);
+            transform: scale(1);
             opacity: 1;
         }
 
         .modal-content::before {
             content: '';
             position: absolute;
-            top: -100px;
-            left: -100px;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
             z-index: -1;
             animation: rotate 20s linear infinite;
         }
@@ -135,103 +202,88 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.08);
-            width: 36px;
-            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 2;
         }
 
         .close-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             transform: rotate(90deg);
-            border-color: rgba(255, 255, 255, 0.2);
         }
 
         h1 {
             font-size: 2.8rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: 300;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #ffffff, #aaaaaa);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         p {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             margin-bottom: 35px;
-            opacity: 0.8;
+            opacity: 0.9;
             line-height: 1.6;
             font-weight: 300;
         }
 
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #ffffff, #e0e0e0);
-            color: #000000;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
             padding: 18px 45px;
             border-radius: 50px;
             text-decoration: none;
             font-size: 1.25rem;
-            font-weight: 500;
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-weight: 600;
+            box-shadow: 
+                0 10px 30px rgba(102, 126, 234, 0.3),
+                0 0 20px rgba(102, 126, 234, 0.2);
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
             margin-bottom: 35px;
             cursor: pointer;
             border: none;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .download-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.25);
-        }
-
-        .download-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .download-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(-100%) skewX(-15deg);
-            transition: transform 0.6s ease;
-        }
-
-        .download-btn:hover::after {
-            transform: translateX(100%) skewX(-15deg);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 15px 40px rgba(102, 126, 234, 0.4),
+                0 0 30px rgba(102, 126, 234, 0.3);
         }
 
         .progress-container {
             width: 100%;
-            height: 14px;
+            height: 15px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
             margin: 35px 0 20px;
             display: none;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(135deg, #ffffff, #cccccc);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 10px;
-            transition: width 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: width 0.6s ease;
             position: relative;
             overflow: hidden;
         }
@@ -243,8 +295,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: shimmer 2.5s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s ease-in-out infinite;
         }
 
         @keyframes shimmer {
@@ -253,32 +305,32 @@
         }
 
         .percentage {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 300;
             margin-bottom: 15px;
             display: none;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #ffffff, #aaaaaa);
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .status {
             font-size: 1.1rem;
-            opacity: 0.8;
+            opacity: 0.9;
             margin-bottom: 25px;
             display: none;
             font-weight: 300;
-            letter-spacing: 0.5px;
+            min-height: 24px;
         }
 
         .file-info {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
             margin-top: 25px;
             text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
         }
 
@@ -286,36 +338,35 @@
             margin-bottom: 15px;
             font-size: 1.3rem;
             font-weight: 400;
-            letter-spacing: 0.5px;
+            color: #667eea;
         }
 
         .file-info p {
             margin-bottom: 8px;
             font-size: 1rem;
-            opacity: 0.7;
+            opacity: 0.8;
         }
 
         .icon {
             font-size: 5rem;
             margin-bottom: 25px;
-            color: rgba(255, 255, 255, 0.9);
+            color: #667eea;
             animation: float 4s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.2));
+            filter: drop-shadow(0 5px 15px rgba(102, 126, 234, 0.3));
         }
 
         @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         .completed {
             display: none;
             margin-top: 25px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(102, 126, 234, 0.1);
             border-radius: 15px;
-            border-left: 4px solid rgba(255, 255, 255, 0.8);
+            border-left: 4px solid #667eea;
             backdrop-filter: blur(10px);
             animation: fadeIn 0.8s ease;
         }
@@ -330,100 +381,45 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
-            50% { transform: scale(1.03); box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3); }
-            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); }
-        }
-
-        .water-drop {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border-radius: 50% 50% 50% 0;
-            background: rgba(255, 255, 255, 0.2);
-            top: -35px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-45deg);
-            animation: drop 2s ease-in-out infinite;
-        }
-
-        @keyframes drop {
-            0% {
-                top: -35px;
-                opacity: 1;
-                transform: translateX(-50%) rotate(-45deg) scale(0.8);
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 10px 30px rgba(102, 126, 234, 0.3),
+                    0 0 20px rgba(102, 126, 234, 0.2);
             }
-            80% {
-                top: 90px;
-                opacity: 0.6;
-                transform: translateX(-50%) rotate(-45deg) scale(1);
-            }
-            100% {
-                top: 110px;
-                opacity: 0;
-                transform: translateX(-50%) rotate(-45deg) scale(1.1);
-            }
-        }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            animation: float-particle 15s infinite linear;
-        }
-
-        @keyframes float-particle {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) translateX(20px);
-                opacity: 0;
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 
+                    0 15px 40px rgba(102, 126, 234, 0.4),
+                    0 0 30px rgba(102, 126, 234, 0.3);
             }
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
+    <!-- Фон с дождем -->
+    <div class="rain-background" id="rainBackground"></div>
     
+    <!-- Основная кнопка Download -->
     <div class="download-trigger" id="downloadTrigger">
         <i class="fas fa-download"></i>
-        <span>Download</span>
+        <span>Download Xeno</span>
     </div>
 
+    <!-- Модальное окно загрузки -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <div class="water-drop"></div>
             <div class="close-btn" id="closeBtn">
                 <i class="fas fa-times"></i>
             </div>
-            <div class="icon">📁</div>
-            <h1>Элегантный Загрузчик</h1>
-            <p>Нажмите кнопку ниже, чтобы скачать файл</p>
+            <div class="icon">⚡</div>
+            <h1>Xeno v1.2.95</h1>
+            <p>Готов к скачиванию с сервера</p>
             
-            <div class="download-btn pulse" id="downloadBtn">Скачать файл</div>
+            <div class="download-btn pulse" id="downloadBtn">Начать загрузку</div>
             
             <div class="percentage" id="percentage">0%</div>
-            <div class="status" id="status">Подготовка к загрузке...</div>
+            <div class="status" id="status">Ожидание запуска...</div>
             
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
@@ -431,34 +427,40 @@
             
             <div class="file-info">
                 <h3>Информация о файле</h3>
-                <p><strong>Имя файла:</strong> example_file.zip</p>
-                <p><strong>Размер:</strong> ~15 МБ</p>
-                <p><strong>Тип:</strong> Архив ZIP</p>
+                <p><strong>Имя файла:</strong> Xeno-v1.2.95.zip</p>
+                <p><strong>Расположение:</strong> /files/Xeno-v1.2.95.zip</p>
+                <p><strong>Размер:</strong> ~18.5 МБ</p>
+                <p><strong>Версия:</strong> 1.2.95 (Stable)</p>
             </div>
             
             <div class="completed" id="completed">
-                <strong>Загрузка завершена!</strong> Файл успешно скачан на ваше устройство.
+                <strong>✓ Загрузка завершена успешно!</strong><br>
+                Файл Xeno-v1.2.95.zip сохранен
             </div>
         </div>
     </div>
 
     <script>
-        // Создание частиц для фона
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
+        // Создание анимации дождя
+        function createRain() {
+            const rainContainer = document.getElementById('rainBackground');
+            const dropCount = 100;
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
+            for (let i = 0; i < dropCount; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('rain-drop');
                 
-                // Случайные позиции и анимации
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.animationDelay = Math.random() * 15 + 's';
-                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-                particle.style.opacity = Math.random() * 0.7 + 0.1;
+                const left = Math.random() * 100;
+                const duration = 1 + Math.random() * 2;
+                const delay = Math.random() * 5;
+                const height = 15 + Math.random() * 25;
                 
-                particlesContainer.appendChild(particle);
+                drop.style.left = `${left}vw`;
+                drop.style.animationDuration = `${duration}s`;
+                drop.style.animationDelay = `${delay}s`;
+                drop.style.height = `${height}px`;
+                
+                rainContainer.appendChild(drop);
             }
         }
 
@@ -473,20 +475,30 @@
         const status = document.getElementById('status');
         const completed = document.getElementById('completed');
 
-        // Инициализация частиц
-        createParticles();
+        // Инициализация дождя
+        createRain();
 
-        // Открытие модального окна с анимацией "капли"
-        downloadTrigger.addEventListener('click', function() {
-            // Создаем эффект ряби
-            const ripple = document.createElement('div');
-            ripple.classList.add('ripple');
-            document.body.appendChild(ripple);
+        // Анимация капли при клике
+        downloadTrigger.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const size = Math.max(rect.width, rect.height) * 1.03; // На 3% больше кнопки
             
-            // Удаляем элемент после завершения анимации
+            // Создаем каплю
+            const drop = document.createElement('div');
+            drop.classList.add('water-drop');
+            drop.style.width = `${size}px`;
+            drop.style.height = `${size}px`;
+            drop.style.left = `${centerX - size/2}px`;
+            drop.style.top = `${centerY - size/2}px`;
+            
+            document.body.appendChild(drop);
+            
+            // Удаляем каплю после анимации
             setTimeout(() => {
-                document.body.removeChild(ripple);
-            }, 1500);
+                document.body.removeChild(drop);
+            }, 1200);
             
             // Открываем модальное окно
             setTimeout(() => {
@@ -497,11 +509,9 @@
         // Закрытие модального окна
         closeBtn.addEventListener('click', function() {
             modal.classList.remove('active');
-            // Сброс состояния загрузки
             resetDownloadState();
         });
 
-        // Закрытие модального окна при клике вне его
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 modal.classList.remove('active');
@@ -518,79 +528,89 @@
             downloadBtn.style.display = 'inline-block';
             progressBar.style.width = '0%';
             percentage.textContent = '0%';
+            downloadBtn.style.transform = 'scale(1)';
         }
 
         // Запуск процесса загрузки
         downloadBtn.addEventListener('click', function() {
-            // Ссылка для скачивания
-            const downloadUrl = 'https://drive.usercontent.google.com/u/0/uc?id=19_nQzWCCFgkFbR7E6l7Wo5bjezxleRhf&export=download';
-            
             // Показать элементы прогресса
             progressContainer.style.display = 'block';
             percentage.style.display = 'block';
             status.style.display = 'block';
             
-            // Скрыть кнопку
-            this.style.display = 'none';
+            // Скрыть кнопку с анимацией
+            this.style.transform = 'scale(0)';
+            setTimeout(() => {
+                this.style.display = 'none';
+            }, 500);
             
-            // Начать анимацию загрузки
-            simulateDownload();
+            // Начать процесс загрузки
+            startDownload();
         });
-        
-        function simulateDownload() {
+
+        function startDownload() {
             let progress = 0;
+            const statusMessages = [
+                "Подключение к серверу...",
+                "Поиск файла Xeno-v1.2.95.zip...", 
+                "Установка безопасного соединения...",
+                "Подготовка к передаче данных...",
+                "Начало загрузки...",
+                "Передача пакетов...",
+                "Проверка целостности...",
+                "Финальная обработка...",
+                "Завершение загрузки..."
+            ];
+            let statusIndex = 0;
             
-            // Имитация загрузки с разной скоростью на разных этапах
             const interval = setInterval(() => {
-                progress += Math.random() * 4;
+                progress += Math.random() * 4 + 1;
                 
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(interval);
                     
-                    // Обновить UI при завершении
+                    // Финальные обновления UI
                     progressBar.style.width = '100%';
                     percentage.textContent = '100%';
                     status.textContent = 'Загрузка завершена!';
                     
-                    // Показать сообщение о завершении
+                    // Запустить реальное скачивание
                     setTimeout(() => {
+                        downloadFileFromServer();
                         completed.style.display = 'block';
-                        
-                        // Начать фактическую загрузку файла
-                        startActualDownload();
                     }, 600);
                 } else {
                     // Обновить прогресс
                     progressBar.style.width = progress + '%';
                     percentage.textContent = Math.round(progress) + '%';
                     
-                    // Обновить статус в зависимости от прогресса
-                    if (progress < 25) {
-                        status.textContent = 'Подготовка файла...';
-                    } else if (progress < 50) {
-                        status.textContent = 'Загрузка файла...';
-                    } else if (progress < 75) {
-                        status.textContent = 'Обработка данных...';
-                    } else if (progress < 90) {
-                        status.textContent = 'Почти готово...';
-                    } else {
-                        status.textContent = 'Завершение...';
+                    // Обновить статус каждые 11%
+                    if (progress % 12 < 1 && statusIndex < statusMessages.length - 1) {
+                        statusIndex++;
+                        status.textContent = statusMessages[statusIndex];
                     }
                 }
             }, 120);
         }
-        
-        function startActualDownload() {
-            // Создаем временную ссылку для скачивания
-            const downloadUrl = 'https://drive.usercontent.google.com/u/0/uc?id=19_nQzWCCFgkFbR7E6l7Wo5bjezxleRhf&export=download';
+
+        function downloadFileFromServer() {
+            // Скачивание файла с сервера
+            const fileUrl = '/files/Xeno-v1.2.95.zip';
+            
             const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = 'downloaded_file.zip'; // Имя файла при сохранении
+            a.href = fileUrl;
+            a.download = 'Xeno-v1.2.95.zip';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         }
+
+        // Проверка доступности файла при загрузке страницы
+        window.addEventListener('load', function() {
+            // Можно добавить проверку доступности файла
+            console.log('Xeno Downloader готов к работе');
+        });
     </script>
 </body>
 </html>
