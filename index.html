@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Скачать Xeno v1.2.95</title>
+    <title>Xeno v1.2.95 - Premium Download</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0c0c0c, #1a1a2e);
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,8 +23,8 @@
             position: relative;
         }
 
-        /* Анимация дождя */
-        .rain-background {
+        /* Анимация частиц */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -34,18 +34,17 @@
             z-index: 1;
         }
 
-        .rain-drop {
+        .particle {
             position: absolute;
-            width: 2px;
-            height: 20px;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
-            animation: rainFall linear infinite;
-            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+            filter: blur(1px);
         }
 
-        @keyframes rainFall {
+        @keyframes floatParticle {
             0% {
-                transform: translateY(-100px) rotate(15deg);
+                transform: translateY(100vh) rotate(0deg) scale(0);
                 opacity: 0;
             }
             10% {
@@ -55,15 +54,56 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(100vh) rotate(15deg);
+                transform: translateY(-100px) rotate(360deg) scale(1);
                 opacity: 0;
             }
         }
 
-        /* Кнопка Download */
+        /* Смайлики с анимацией */
+        .floating-emojis {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0;
+            animation: floatEmoji linear infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+
+        @keyframes floatEmoji {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Кнопка Download сверху */
         .download-trigger {
-            position: relative;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
             color: white;
             padding: 20px 50px;
             border-radius: 50px;
@@ -72,51 +112,93 @@
             align-items: center;
             gap: 15px;
             box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.3),
+                0 20px 40px rgba(0, 0, 0, 0.6),
                 0 0 0 2px rgba(255, 255, 255, 0.1),
-                inset 0 0 20px rgba(255, 255, 255, 0.1);
+                inset 0 0 50px rgba(255, 255, 255, 0.05);
             z-index: 100;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border: none;
             font-size: 1.3rem;
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             overflow: hidden;
+            backdrop-filter: blur(20px);
         }
 
         .download-trigger:hover {
-            transform: translateY(-5px) scale(1.05);
+            transform: translateX(-50%) translateY(-5px) scale(1.08);
             box-shadow: 
-                0 20px 45px rgba(102, 126, 234, 0.4),
-                0 0 0 2px rgba(255, 255, 255, 0.2);
+                0 25px 50px rgba(0, 0, 0, 0.8),
+                0 0 0 3px rgba(255, 255, 255, 0.2),
+                inset 0 0 80px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.08) 100%);
         }
 
-        .download-trigger::before {
-            content: '';
+        /* Анимация волн при наведении */
+        .wave-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .wave {
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.6s ease;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            animation: waveFlow 2s ease-in-out infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .download-trigger:hover::before {
-            left: 100%;
+        .wave-1 { animation-delay: 0s; }
+        .wave-2 { animation-delay: 0.4s; }
+        .wave-3 { animation-delay: 0.8s; }
+
+        .download-trigger:hover .wave {
+            opacity: 1;
+        }
+
+        @keyframes waveFlow {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
         }
 
         /* Анимация капли */
         .water-drop {
             position: fixed;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.7));
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(200, 200, 200, 0.7) 50%,
+                transparent 100%);
             transform: scale(0);
             z-index: 10;
             pointer-events: none;
-            filter: blur(5px);
-            animation: dropExpand 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            filter: blur(15px);
+            animation: dropExpand 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
         }
 
         @keyframes dropExpand {
@@ -125,11 +207,11 @@
                 opacity: 1;
             }
             50% {
-                transform: scale(1.06);
+                transform: scale(1.08);
                 opacity: 0.8;
             }
             100% {
-                transform: scale(1.05);
+                transform: scale(1.06);
                 opacity: 0;
             }
         }
@@ -144,10 +226,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 20;
+            z-index: 200;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: all 0.6s ease;
         }
 
         .modal.active {
@@ -156,252 +238,335 @@
         }
 
         .modal-content {
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 50px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            padding: 60px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
-                inset 0 0 40px rgba(255, 255, 255, 0.05);
+                0 40px 80px rgba(0, 0, 0, 0.8),
+                0 0 0 2px rgba(255, 255, 255, 0.1),
+                inset 0 0 60px rgba(255, 255, 255, 0.03);
             text-align: center;
             color: white;
-            transform: scale(0.8);
+            transform: scale(0.7) rotateX(45deg);
             opacity: 0;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .modal.active .modal-content {
-            transform: scale(1);
+            transform: scale(1) rotateX(0);
             opacity: 1;
         }
 
         .modal-content::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            animation: rotate 15s linear infinite;
             z-index: -1;
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            width: 35px;
-            height: 35px;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             z-index: 2;
+            color: white;
+            font-size: 1.2rem;
         }
 
         .close-btn:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
+            transform: rotate(180deg) scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         h1 {
-            font-size: 2.8rem;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            margin-bottom: 25px;
             font-weight: 300;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff, #cccccc, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: shimmerText 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes shimmerText {
+            0%, 100% { background-position: -200% 0; }
+            50% { background-position: 200% 0; }
         }
 
         p {
-            font-size: 1.2rem;
-            margin-bottom: 35px;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
             opacity: 0.9;
-            line-height: 1.6;
+            line-height: 1.7;
             font-weight: 300;
+            color: #e0e0e0;
+            letter-spacing: 0.5px;
         }
 
         .download-btn {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 18px 45px;
+            background: linear-gradient(135deg, #ffffff, #e8e8e8);
+            color: #000000;
+            padding: 22px 55px;
             border-radius: 50px;
             text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
             box-shadow: 
-                0 10px 30px rgba(102, 126, 234, 0.3),
-                0 0 20px rgba(102, 126, 234, 0.2);
-            transition: all 0.4s ease;
+                0 15px 35px rgba(255, 255, 255, 0.3),
+                0 0 25px rgba(255, 255, 255, 0.2),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
             cursor: pointer;
             border: none;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .download-btn:hover {
-            transform: translateY(-3px) scale(1.05);
+            transform: translateY(-5px) scale(1.08);
             box-shadow: 
-                0 15px 40px rgba(102, 126, 234, 0.4),
-                0 0 30px rgba(102, 126, 234, 0.3);
+                0 20px 45px rgba(255, 255, 255, 0.4),
+                0 0 35px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
         }
 
         .progress-container {
             width: 100%;
-            height: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             overflow: hidden;
-            margin: 35px 0 20px;
+            margin: 40px 0 25px;
             display: none;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                inset 0 2px 15px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
-            transition: width 0.6s ease;
+            background: linear-gradient(135deg, #ffffff, #aaaaaa, #ffffff);
+            border-radius: 12px;
+            transition: width 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
+            background-size: 200% 100%;
+            animation: progressShimmer 2s ease-in-out infinite;
         }
 
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @keyframes progressShimmer {
+            0%, 100% { background-position: -200% 0; }
+            50% { background-position: 200% 0; }
         }
 
         .percentage {
-            font-size: 2.2rem;
+            font-size: 2.8rem;
             font-weight: 300;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: none;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffffff, #cccccc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
 
         .status {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             display: none;
             font-weight: 300;
-            min-height: 24px;
+            min-height: 28px;
+            color: #e0e0e0;
+            letter-spacing: 1px;
         }
 
         .file-info {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
             text-align: left;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: slideUpFade 1s ease 0.8s forwards;
+        }
+
+        @keyframes slideUpFade {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .file-info h3 {
-            margin-bottom: 15px;
-            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
             font-weight: 400;
-            color: #667eea;
+            color: #ffffff;
+            letter-spacing: 1px;
         }
 
         .file-info p {
-            margin-bottom: 8px;
-            font-size: 1rem;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
             opacity: 0.8;
         }
 
         .icon {
-            font-size: 5rem;
-            margin-bottom: 25px;
-            color: #667eea;
-            animation: float 4s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(102, 126, 234, 0.3));
+            font-size: 6rem;
+            margin-bottom: 30px;
+            color: #ffffff;
+            animation: float3D 6s ease-in-out infinite;
+            filter: 
+                drop-shadow(0 10px 25px rgba(255, 255, 255, 0.3))
+                drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+            transform-style: preserve-3d;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        @keyframes float3D {
+            0%, 100% { 
+                transform: translateY(0px) rotateY(0deg) scale(1);
+            }
+            25% { 
+                transform: translateY(-20px) rotateY(90deg) scale(1.1);
+            }
+            50% { 
+                transform: translateY(-10px) rotateY(180deg) scale(1.2);
+            }
+            75% { 
+                transform: translateY(-15px) rotateY(270deg) scale(1.1);
+            }
         }
 
         .completed {
             display: none;
-            margin-top: 25px;
-            padding: 20px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 15px;
-            border-left: 4px solid #667eea;
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.8s ease;
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            border-left: 5px solid #ffffff;
+            backdrop-filter: blur(15px);
+            animation: completeReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes completeReveal {
+            0% { 
+                transform: scale(0.7) rotateX(-90deg);
+                opacity: 0;
+            }
+            100% { 
+                transform: scale(1) rotateX(0);
+                opacity: 1;
+            }
         }
 
         .pulse {
-            animation: pulse 3s ease-in-out infinite;
+            animation: gentlePulse 4s ease-in-out infinite;
         }
 
-        @keyframes pulse {
+        @keyframes gentlePulse {
             0%, 100% { 
                 transform: scale(1);
                 box-shadow: 
-                    0 10px 30px rgba(102, 126, 234, 0.3),
-                    0 0 20px rgba(102, 126, 234, 0.2);
+                    0 15px 35px rgba(255, 255, 255, 0.3),
+                    0 0 25px rgba(255, 255, 255, 0.2);
             }
             50% { 
-                transform: scale(1.03);
+                transform: scale(1.05);
                 box-shadow: 
-                    0 15px 40px rgba(102, 126, 234, 0.4),
-                    0 0 30px rgba(102, 126, 234, 0.3);
+                    0 20px 45px rgba(255, 255, 255, 0.4),
+                    0 0 35px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        /* Эффект неонового свечения */
+        .neon-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            animation: pulseGlow 4s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 0.6; 
+                transform: translate(-50%, -50%) scale(1.1);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Фон с дождем -->
-    <div class="rain-background" id="rainBackground"></div>
+    <!-- Эффект неонового свечения -->
+    <div class="neon-glow"></div>
     
-    <!-- Основная кнопка Download -->
+    <!-- Анимация частиц -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Плавающие смайлики -->
+    <div class="floating-emojis" id="floatingEmojis"></div>
+    
+    <!-- Основная кнопка Download сверху -->
     <div class="download-trigger" id="downloadTrigger">
+        <div class="wave-container">
+            <div class="wave wave-1"></div>
+            <div class="wave wave-2"></div>
+            <div class="wave wave-3"></div>
+        </div>
         <i class="fas fa-download"></i>
         <span>Download Xeno</span>
     </div>
@@ -413,54 +578,87 @@
                 <i class="fas fa-times"></i>
             </div>
             <div class="icon">⚡</div>
-            <h1>Xeno v1.2.95</h1>
-            <p>Готов к скачиванию с сервера</p>
+            <h1>XENO v1.2.95</h1>
+            <p>Премиум версия готов к скачиванию</p>
             
-            <div class="download-btn pulse" id="downloadBtn">Начать загрузку</div>
+            <div class="download-btn pulse" id="downloadBtn">
+                <i class="fas fa-rocket"></i>
+                НАЧАТЬ ЗАГРУЗКУ
+            </div>
             
             <div class="percentage" id="percentage">0%</div>
-            <div class="status" id="status">Ожидание запуска...</div>
+            <div class="status" id="status">Инициализация системы...</div>
             
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             
             <div class="file-info">
-                <h3>Информация о файле</h3>
-                <p><strong>Имя файла:</strong> Xeno-v1.2.95.zip</p>
-                <p><strong>Расположение:</strong> /files/Xeno-v1.2.95.zip</p>
-                <p><strong>Размер:</strong> ~18.5 МБ</p>
-                <p><strong>Версия:</strong> 1.2.95 (Stable)</p>
+                <h3>📦 Информация о файле</h3>
+                <p><strong>🎯 Имя файла:</strong> Xeno-v1.2.95.zip</p>
+                <p><strong>📁 Расположение:</strong> /files/Xeno-v1.2.95.zip</p>
+                <p><strong>💾 Размер:</strong> ~18.5 МБ</p>
+                <p><strong>🚀 Версия:</strong> 1.2.95 (Stable Release)</p>
+                <p><strong>⭐ Рейтинг:</strong> ★★★★★ (4.9/5.0)</p>
             </div>
             
             <div class="completed" id="completed">
-                <strong>✓ Загрузка завершена успешно!</strong><br>
-                Файл Xeno-v1.2.95.zip сохранен
+                <strong>🎉 Загрузка завершена успешно!</strong><br>
+                <span style="opacity: 0.8;">Файл Xeno-v1.2.95.zip сохранен в вашу папку загрузок</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Создание анимации дождя
-        function createRain() {
-            const rainContainer = document.getElementById('rainBackground');
-            const dropCount = 100;
+        // Создание анимации частиц
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 150;
             
-            for (let i = 0; i < dropCount; i++) {
-                const drop = document.createElement('div');
-                drop.classList.add('rain-drop');
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
                 
+                const size = Math.random() * 3 + 1;
                 const left = Math.random() * 100;
-                const duration = 1 + Math.random() * 2;
-                const delay = Math.random() * 5;
-                const height = 15 + Math.random() * 25;
+                const duration = 10 + Math.random() * 20;
+                const delay = Math.random() * 10;
+                const opacity = Math.random() * 0.6 + 0.2;
                 
-                drop.style.left = `${left}vw`;
-                drop.style.animationDuration = `${duration}s`;
-                drop.style.animationDelay = `${delay}s`;
-                drop.style.height = `${height}px`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}vw`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.opacity = opacity;
                 
-                rainContainer.appendChild(drop);
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Создание плавающих смайликов
+        function createFloatingEmojis() {
+            const emojisContainer = document.getElementById('floatingEmojis');
+            const emojis = ['⭐', '✨', '🚀', '💫', '🎯', '🔥', '💎', '⚡', '🌟', '🎮'];
+            const emojiCount = 25;
+            
+            for (let i = 0; i < emojiCount; i++) {
+                const emoji = document.createElement('div');
+                emoji.classList.add('floating-emoji');
+                
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                const left = Math.random() * 100;
+                const duration = 8 + Math.random() * 12;
+                const delay = Math.random() * 8;
+                const size = 1 + Math.random() * 1.5;
+                
+                emoji.textContent = randomEmoji;
+                emoji.style.left = `${left}vw`;
+                emoji.style.animationDuration = `${duration}s`;
+                emoji.style.animationDelay = `${delay}s`;
+                emoji.style.fontSize = `${size}rem`;
+                
+                emojisContainer.appendChild(emoji);
             }
         }
 
@@ -475,15 +673,16 @@
         const status = document.getElementById('status');
         const completed = document.getElementById('completed');
 
-        // Инициализация дождя
-        createRain();
+        // Инициализация эффектов
+        createParticles();
+        createFloatingEmojis();
 
         // Анимация капли при клике
         downloadTrigger.addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            const size = Math.max(rect.width, rect.height) * 1.03; // На 3% больше кнопки
+            const size = Math.max(rect.width, rect.height) * 1.03;
             
             // Создаем каплю
             const drop = document.createElement('div');
@@ -497,13 +696,15 @@
             
             // Удаляем каплю после анимации
             setTimeout(() => {
-                document.body.removeChild(drop);
-            }, 1200);
+                if (document.body.contains(drop)) {
+                    document.body.removeChild(drop);
+                }
+            }, 1500);
             
             // Открываем модальное окно
             setTimeout(() => {
                 modal.classList.add('active');
-            }, 400);
+            }, 500);
         });
 
         // Закрытие модального окна
@@ -538,11 +739,8 @@
             percentage.style.display = 'block';
             status.style.display = 'block';
             
-            // Скрыть кнопку с анимацией
-            this.style.transform = 'scale(0)';
-            setTimeout(() => {
-                this.style.display = 'none';
-            }, 500);
+            // Скрыть кнопку загрузки в модальном окне
+            this.style.display = 'none';
             
             // Начать процесс загрузки
             startDownload();
@@ -551,15 +749,15 @@
         function startDownload() {
             let progress = 0;
             const statusMessages = [
-                "Подключение к серверу...",
-                "Поиск файла Xeno-v1.2.95.zip...", 
-                "Установка безопасного соединения...",
-                "Подготовка к передаче данных...",
-                "Начало загрузки...",
-                "Передача пакетов...",
-                "Проверка целостности...",
-                "Финальная обработка...",
-                "Завершение загрузки..."
+                "🔍 Подключение к серверу...",
+                "📁 Поиск файла Xeno-v1.2.95.zip...", 
+                "🔒 Установка безопасного соединения...",
+                "⚡ Подготовка к передаче данных...",
+                "🚀 Начало загрузки...",
+                "📦 Передача пакетов...",
+                "✅ Проверка целостности...",
+                "🎨 Финальная обработка...",
+                "🎉 Завершение загрузки..."
             ];
             let statusIndex = 0;
             
@@ -573,13 +771,13 @@
                     // Финальные обновления UI
                     progressBar.style.width = '100%';
                     percentage.textContent = '100%';
-                    status.textContent = 'Загрузка завершена!';
+                    status.textContent = '🎊 Загрузка завершена!';
                     
                     // Запустить реальное скачивание
                     setTimeout(() => {
                         downloadFileFromServer();
                         completed.style.display = 'block';
-                    }, 600);
+                    }, 800);
                 } else {
                     // Обновить прогресс
                     progressBar.style.width = progress + '%';
@@ -608,8 +806,7 @@
 
         // Проверка доступности файла при загрузке страницы
         window.addEventListener('load', function() {
-            // Можно добавить проверку доступности файла
-            console.log('Xeno Downloader готов к работе');
+            console.log('🎮 Xeno Premium Downloader готов к работе!');
         });
     </script>
 </body>
